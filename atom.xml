@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>XiaoXuxuy</title>
+  
+  <subtitle>博观而约取，厚积而薄发</subtitle>
+  <link href="https://blog.hasaik.com/atom.xml" rel="self"/>
+  
+  <link href="https://blog.hasaik.com/"/>
+  <updated>2021-02-27T14:22:24.184Z</updated>
+  <id>https://blog.hasaik.com/</id>
+  
+  <author>
+    <name>·银河小徐</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Jenkins + Gitlab + Docker + Spring Boot 实现自动部署</title>
+    <link href="https://blog.hasaik.com/posts/3fe685e0.html"/>
+    <id>https://blog.hasaik.com/posts/3fe685e0.html</id>
+    <published>2020-09-13T16:26:48.000Z</published>
+    <updated>2021-02-27T14:22:24.184Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;本文主要介绍持续集成的搭建方式，采用 Docker 的方式去搭建 Jenkins 环境，篇幅有点长，请仔细阅读。（无废话版）&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="自动部署" scheme="https://blog.hasaik.com/categories/%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/"/>
+    
+    
+    <category term="Gitlab" scheme="https://blog.hasaik.com/tags/Gitlab/"/>
+    
+    <category term="Jenkins" scheme="https://blog.hasaik.com/tags/Jenkins/"/>
+    
+    <category term="Docker" scheme="https://blog.hasaik.com/tags/Docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CyclicBarrier 的理解和使用</title>
+    <link href="https://blog.hasaik.com/posts/6d42a1fc.html"/>
+    <id>https://blog.hasaik.com/posts/6d42a1fc.html</id>
+    <published>2020-08-31T09:36:48.000Z</published>
+    <updated>2021-02-27T14:22:24.184Z</updated>
+    
+    
+    <summary type="html">CyclicBarrier 是一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)。在涉及一组固定大小的线程程序中，这些线程必须不时地互相等待，此时 CyclicBarrier 很有用。因为该 barrier 在释放等待线程后可以重用，所以称它为循环的 barrier 。</summary>
+    
+    
+    
+    <category term="Java" scheme="https://blog.hasaik.com/categories/Java/"/>
+    
+    <category term="线程" scheme="https://blog.hasaik.com/categories/Java/%E7%BA%BF%E7%A8%8B/"/>
+    
+    
+    <category term="Java" scheme="https://blog.hasaik.com/tags/Java/"/>
+    
+    <category term="线程" scheme="https://blog.hasaik.com/tags/%E7%BA%BF%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Java 垃圾收集算法</title>
+    <link href="https://blog.hasaik.com/posts/2375015f.html"/>
+    <id>https://blog.hasaik.com/posts/2375015f.html</id>
+    <published>2020-08-24T19:52:59.000Z</published>
+    <updated>2021-02-27T14:22:24.184Z</updated>
+    
+    
+    <summary type="html">JVM 中的垃圾回收算法有标记-清除算法、复制算法、标记-整理算法、分代收集算法四种算法。</summary>
+    
+    
+    
+    <category term="Java" scheme="https://blog.hasaik.com/categories/Java/"/>
+    
+    <category term="JVM" scheme="https://blog.hasaik.com/categories/Java/JVM/"/>
+    
+    
+    <category term="Java" scheme="https://blog.hasaik.com/tags/Java/"/>
+    
+    <category term="JVM" scheme="https://blog.hasaik.com/tags/JVM/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CountDownLatch 的理解和使用</title>
+    <link href="https://blog.hasaik.com/posts/cf9c1454.html"/>
+    <id>https://blog.hasaik.com/posts/cf9c1454.html</id>
+    <published>2020-08-21T10:57:48.000Z</published>
+    <updated>2021-02-27T14:22:24.184Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;最近在看多线程之间的通信，笔者我觉得自己的脑袋实在不够用了，很多东西看过就忘，所以今天抽出点时间码一遍 CountDownLatch 的理解和使用。&lt;/p&gt;
+&lt;p&gt;此文也是从网上查找的资料，然后自己敲一遍，以便加深印象和更深入的理解。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Java" scheme="https://blog.hasaik.com/categories/Java/"/>
+    
+    <category term="线程" scheme="https://blog.hasaik.com/categories/Java/%E7%BA%BF%E7%A8%8B/"/>
+    
+    
+    <category term="Java" scheme="https://blog.hasaik.com/tags/Java/"/>
+    
+    <category term="线程" scheme="https://blog.hasaik.com/tags/%E7%BA%BF%E7%A8%8B/"/>
+    
+    <category term="通信" scheme="https://blog.hasaik.com/tags/%E9%80%9A%E4%BF%A1/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CentOS搭建Gitlab的详细教程</title>
+    <link href="https://blog.hasaik.com/posts/a460b91e.html"/>
+    <id>https://blog.hasaik.com/posts/a460b91e.html</id>
+    <published>2020-04-16T14:05:16.000Z</published>
+    <updated>2021-02-27T14:22:24.184Z</updated>
+    
+    
+    <summary type="html">记录一次CentOS搭建gitlab服务器的经历。</summary>
+    
+    
+    
+    <category term="Gitlab" scheme="https://blog.hasaik.com/categories/Gitlab/"/>
+    
+    
+    <category term="CentOS" scheme="https://blog.hasaik.com/tags/CentOS/"/>
+    
+    <category term="Gitlab" scheme="https://blog.hasaik.com/tags/Gitlab/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>FFmpeg + nginx-http-flv-module + flv.js 实现视频流播放</title>
+    <link href="https://blog.hasaik.com/posts/358f95d9.html"/>
+    <id>https://blog.hasaik.com/posts/358f95d9.html</id>
+    <published>2020-04-01T09:22:38.000Z</published>
+    <updated>2021-02-27T14:22:24.184Z</updated>
+    
+    
+    <summary type="html">最近项目组接了一个视频流项目，项目的主要核心是将网络摄像头RTSP视频流在WEB端实时播放，经过两天的调查和爬坑，终于实现了视频流的播放。</summary>
+    
+    
+    
+    <category term="流媒体服务" scheme="https://blog.hasaik.com/categories/%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1/"/>
+    
+    
+    <category term="nginx-http-flv-module" scheme="https://blog.hasaik.com/tags/nginx-http-flv-module/"/>
+    
+    <category term="视频流播放" scheme="https://blog.hasaik.com/tags/%E8%A7%86%E9%A2%91%E6%B5%81%E6%92%AD%E6%94%BE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hexo+NexT 自定义样式博文加密</title>
+    <link href="https://blog.hasaik.com/posts/c1cdcf68.html"/>
+    <id>https://blog.hasaik.com/posts/c1cdcf68.html</id>
+    <published>2019-10-16T16:31:27.000Z</published>
+    <updated>2021-02-27T14:22:24.184Z</updated>
+    
+    
+    <summary type="html">介绍一种自定义博文加密方式，不需要插件，极简模式，相对安全。</summary>
+    
+    
+    
+    <category term="Hexo" scheme="https://blog.hasaik.com/categories/Hexo/"/>
+    
+    
+    <category term="Hexo" scheme="https://blog.hasaik.com/tags/Hexo/"/>
+    
+    <category term="Password" scheme="https://blog.hasaik.com/tags/Password/"/>
+    
+    <category term="Security" scheme="https://blog.hasaik.com/tags/Security/"/>
+    
+  </entry>
+  
+</feed>
