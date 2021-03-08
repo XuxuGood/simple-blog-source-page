@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+
+<head>
+  <meta name="generator" content="Hexo 5.3.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  <link rel='dns-prefetch' href='https://cdn.jsdelivr.net'>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>CountDownLatch 的理解和使用 - XiaoXuxuy</title>
+
+  
+    <meta name="description" content="最近在看多线程之间的通信，笔者我觉得自己的脑袋实在不够用了，很多东西看过就忘，所以今天抽出点时间码一遍 CountDownLatch 的理解和使用。 此文也是从网上查找的资料，然后自己敲一遍，以便加深印象和更深入的理解。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CountDownLatch 的理解和使用">
+<meta property="og:url" content="https://blog.hasaik.com/posts/cf9c1454.html">
+<meta property="og:site_name" content="XiaoXuxuy">
+<meta property="og:description" content="最近在看多线程之间的通信，笔者我觉得自己的脑袋实在不够用了，很多东西看过就忘，所以今天抽出点时间码一遍 CountDownLatch 的理解和使用。 此文也是从网上查找的资料，然后自己敲一遍，以便加深印象和更深入的理解。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-21T10:57:48.000Z">
+<meta property="article:modified_time" content="2021-03-08T13:13:31.852Z">
+<meta property="article:author" content="·银河小徐">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="线程">
+<meta property="article:tag" content="通信">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="XiaoXuxuy" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    
+      <meta name='theme-color' content='#FFFFFF'>
+    
+      <meta name='msapplication-TileColor' content='#1BC3FB'>
+    
+      <link rel='shortcut icon' type='image/x-icon' href='https://cdn.jsdelivr.net/gh/XuxuGood/simple-blog-cdn@master/images/site-img/favicon.png'>
+    
+      <script src='https://cdn.jsdelivr.net/npm/jquery@3.5/dist/jquery.min.js'></script>
+    
+  
+</head>
+
+<body theme='light'>
+  
+
+
+  <div class='l_body' id='start'>
+    <aside class='l_left'>
+    
+
+<header class='header'>
+  <div class='logo-wrap'>
+  
+    <a class='avatar' href='/about/'><img no-lazy src='/images/avatar.jpg'/></a>
+  
+  
+    <a class='title' href='/'>XiaoXuxuy</a>
+  
+</div>
+
+  <nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/notes/">笔记</a><a class="nav-item" href="/about/">更多</a></nav>
+</header>
+
+<div class='widgets'>
+  
+    
+      
+      
+
+  <div class='widget-wrap' id='toc'>
+    <div class='widget-header h4 dis-select'>
+      <span class='name'>
+        
+          本文目录
+        
+      </span>
+      <a class='cap-action' id='s-top' title='回到顶部' href='#start'>
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10505"><path d="M884.526 163.323H208.881c-30.516 0-55.25 24.934-55.25 55.685s24.734 55.685 55.25 55.685h675.645c30.515 0 55.255-24.93 55.255-55.685s-24.74-55.685-55.255-55.685zM568.253 336.87a56.765 56.765 0 0 0-4.06-3.701c-0.63-0.517-1.29-0.968-1.935-1.454-0.799-0.605-1.577-1.224-2.406-1.787-0.779-0.528-1.583-0.978-2.386-1.46-0.748-0.45-1.485-0.926-2.253-1.341-0.81-0.44-1.649-0.814-2.483-1.208-0.8-0.384-1.588-0.784-2.407-1.132-0.814-0.338-1.643-0.61-2.463-0.906-0.875-0.323-1.745-0.66-2.641-0.932-0.825-0.25-1.66-0.435-2.489-0.645-0.916-0.236-1.817-0.492-2.75-0.681-0.962-0.19-1.935-0.307-2.902-0.445-0.814-0.118-1.618-0.272-2.442-0.354a55.163 55.163 0 0 0-5.438-0.276h-0.015c-0.267 0-0.528 0.036-0.794 0.036a54.856 54.856 0 0 0-39.86 16.271l-279.413 281.61c-21.576 21.75-21.576 57.006 0 78.756a54.876 54.876 0 0 0 39.07 16.312 54.835 54.835 0 0 0 39.066-16.312l186.67-188.145V898.09c0 30.75 24.74 55.685 55.256 55.685s55.255-24.934 55.255-55.685v-387.42L769.526 697.22a54.871 54.871 0 0 0 39.065 16.312 54.835 54.835 0 0 0 39.066-16.312c21.576-21.75 21.576-57.006 0-78.756L568.253 336.87z" p-id="10506"></path></svg>
+      </a>
+    </div>
+    <div class='widget-body fs14 post'>
+      
+        <div class='doc-tree active'>
+          <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CountDownLatch-%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-text">CountDownLatch 的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CountDownLatch-%E7%9A%84%E6%96%B9%E6%B3%95%E8%AF%B4%E6%98%8E"><span class="toc-text">CountDownLatch 的方法说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CountDownLatch-%E7%9A%84%E7%94%A8%E6%B3%95"><span class="toc-text">CountDownLatch 的用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E7%94%A8%E6%B3%951"><span class="toc-text">典型用法1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E7%94%A8%E6%B3%952"><span class="toc-text">典型用法2</span></a></li></ol></li></ol>
+        </div>
+      
+    </div>
+  </div>
+
+
+    
+  
+    
+      
+      <div class='widget-wrap' id='recent'>
+  <div class='widget-header h4 dis-select'>
+    <span class='name'>最近更新</span>
+    
+      <a class='cap-action' id='rss' title='Subscribe' href='/atom.xml'>
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8938"><path d="M800.966 947.251c0-404.522-320.872-732.448-716.69-732.448V62.785c477.972 0 865.44 395.987 865.44 884.466h-148.75z m-162.273 0h-148.74c0-228.98-181.628-414.598-405.678-414.598v-152.01c306.205 0 554.418 253.68 554.418 566.608z m-446.24-221.12c59.748 0 108.189 49.503 108.189 110.557 0 61.063-48.44 110.563-108.188 110.563-59.747 0-108.18-49.5-108.18-110.563 0-61.054 48.433-110.556 108.18-110.556z" p-id="8939"></path></svg>
+      </a>
+    
+  </div>
+  <div class='widget-body fs14'>
+    
+    
+      <div class='post-title'>
+        <a href="/posts/45c03634.html">
+          
+            Spring Boot 通用解决 LocalDateTime 转为字符串后中间含“T”
+          
+        </a>
+      </div>
+    
+      <div class='post-title'>
+        <a href="/posts/a460b91e.html">
+          
+            CentOS搭建Gitlab的详细教程
+          
+        </a>
+      </div>
+    
+      <div class='post-title'>
+        <a href="/posts/6d42a1fc.html">
+          
+            CyclicBarrier 的理解和使用
+          
+        </a>
+      </div>
+    
+      <div class='post-title'>
+        <a href="/posts/69ab28bb.html">
+          
+            Element UI DatePicker 禁用当前日之前的时间
+          
+        </a>
+      </div>
+    
+      <div class='post-title'>
+        <a href="/posts/358f95d9.html">
+          
+            FFmpeg + nginx-http-flv-module + flv.js 实现视频流播放
+          
+        </a>
+      </div>
+    
+  </div>
+</div>
+
+    
+  
+</div>
+<footer class="footer"><div class="social-wrap dis-select"><a class="social" href="/atom.xml" rel="noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/25678f144c438.svg"/></a><a class="social" href="https://github.com/XuxuGood" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/08a41b181ce68.svg"/></a><a class="social" href="https://music.163.com/#/user/home?id=109933387" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/cf1ae151f9e83.svg"/></a><a class="social" href="/comments/" rel="noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/942ebbf1a4b91.svg"/></a></div></footer>
+
+    </aside>
+    <div class='l_main'>
+      
+
+      
+
+
+  <div class='bread-nav fs12'>
+  
+    
+    <div id='breadcrumb' style="color:#c921f3">
+      <a class='cap breadcrumb' href='/'>主页</a>
+      <span class="sep"></span>
+      <a class='cap breadcrumb' href='/'>文章</a>
+      
+        <span class="sep"></span>
+        <a class="cap breadcrumb-link" href="/categories/Java/">Java</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/Java/%E7%BA%BF%E7%A8%8B/">线程</a>
+      
+    </div>
+    <div id='post-meta'>
+      发布于&nbsp;<time datetime='2020-08-21T10:57:48.000Z'>2020年08月21日</time>
+    </div>
+  
+  </div>
+
+
+<article class='content md post reveal'>
+<h1 class="article-title"><span>CountDownLatch 的理解和使用</span></h1>
+<p>最近在看多线程之间的通信，笔者我觉得自己的脑袋实在不够用了，很多东西看过就忘，所以今天抽出点时间码一遍 CountDownLatch 的理解和使用。</p>
+<p>此文也是从网上查找的资料，然后自己敲一遍，以便加深印象和更深入的理解。</p>
+<a id="more"></a>
+
+<h2 id="CountDownLatch-的概念"><a href="#CountDownLatch-的概念" class="headerlink" title="CountDownLatch 的概念"></a>CountDownLatch 的概念</h2><p>CountDownLatch 是一个同步工具类，用来协调多个线程之间的同步，或者说其为线程之间的<emp>通信</emp>（而不是用作<emp>互斥作用</emp>）。</p>
+<p>CountDownLatch 能够使一个线程在等待另外一些线程完成各自的工作之后，再继续执行。通过一个计数器来进行实现，计数器的初始值为线程的数量，当每一个线程完成自己的任务后，计数器的值就会减一，当计数器的值为零时，表示所有线程都已经完成相应的任务，然后在 CountDownLatch 上等待的线程就可以恢复执行接下来的任务。</p>
+<h2 id="CountDownLatch-的方法说明"><a href="#CountDownLatch-的方法说明" class="headerlink" title="CountDownLatch 的方法说明"></a>CountDownLatch 的方法说明</h2><p><strong>public void countDown()</strong></p>
+<p>递减锁存器的计数，如果计数到达零，则释放所有等待的线程。如果当前计数大于零，则将计数减少。如果新的计数为零，出于线程调度目的，将重新启用所有的等待线程。如果当前计数等于零，则不发生任何操作。</p>
+<p><strong>public boolean await (long timeout, TimeUnit unit) throws InterruptedException</strong></p>
+<p>使当前线程在锁存器倒计数至零之前一直等待，除非线程被中断或超出了指定的等待时间。如果当前计数为零，则此方法立刻返回 true 值。</p>
+<p>如果当前计数大于零，则出于线程调度目的，将禁用当前线程，且在发生以下三种情况之一前，该线程将一直处于休眠状态：</p>
+<ol>
+<li>如果计数到达零，则该方法返回 true 值。</li>
+<li>如果当前线程，在进入此方法时已经设置了该线程的中断状态；或者在等待时被中断，则抛出 InterruptedException，并且清除当前线程的已中断状态。</li>
+<li>如果超出了指定的等待时间，则返回值为 false。如果该时间小于等于零，则此方法根本不会等待。</li>
+</ol>
+<p>参数：</p>
+<ul>
+<li>timeout - 要等待的最长时间</li>
+<li>unit - timeout 参数的时间单位</li>
+</ul>
+<p>返回：</p>
+<ul>
+<li>如果计数到达零，则返回true；如果在计数到达零之前超过了等待时间，则返回false。</li>
+</ul>
+<p>抛出：</p>
+<ul>
+<li>InterruptedException - 如果当前线程在等待时被中断则抛出 InterruptedException 异常</li>
+</ul>
+<h2 id="CountDownLatch-的用法"><a href="#CountDownLatch-的用法" class="headerlink" title="CountDownLatch 的用法"></a>CountDownLatch 的用法</h2><h3 id="典型用法1"><a href="#典型用法1" class="headerlink" title="典型用法1"></a>典型用法1</h3><p>某一线程在开始运行前等待n个线程执行完毕。将 CountDownLatch 的计数器初始化为n <code>new CountDownLatch(n)</code>，每当一个任务线程执行完毕，就将计数器减1 <code>countdownlatch.countDown()</code>，当计数器的值变为0时，在 CountDownLatch 上 <code>await()</code> 的线程就会被唤醒。一个典型应用场景就是启动一个服务时，主线程需要等待多个组件加载完毕，之后再继续执行。</p>
+<p>代码示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.CountDownLatch;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.Math.*;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.util.concurrent.Executors.newFixedThreadPool;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>: Xuxu</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span>: 2020-08-21 14:51</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CountdownLatchTest1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ExecutorService service = newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line">        <span class="keyword">final</span> CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(<span class="number">3</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">            Runnable runnable = () -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;子线程&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;开始执行&quot;</span>);</span><br><span class="line">                    Thread.sleep((<span class="keyword">long</span>) (random() * <span class="number">10000</span>));</span><br><span class="line">                    System.out.println(<span class="string">&quot;子线程&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;执行完成&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    <span class="comment">// 很关键, 无论上面程序是否异常必须执行countDown,否则await无法释放</span></span><br><span class="line">                    latch.countDown();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line">            service.execute(runnable);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;主线程&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;等待子线程执行完成...&quot;</span>);</span><br><span class="line">            latch.await();<span class="comment">//阻塞当前线程，直到计数器的值为0</span></span><br><span class="line">            System.out.println(<span class="string">&quot;主线程&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;开始执行...&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        service.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">主线程main等待子线程执行完成...</span><br><span class="line">子线程pool-1-thread-3开始执行</span><br><span class="line">子线程pool-1-thread-1开始执行</span><br><span class="line">子线程pool-1-thread-2开始执行</span><br><span class="line">子线程pool-1-thread-2执行完成</span><br><span class="line">子线程pool-1-thread-1执行完成</span><br><span class="line">子线程pool-1-thread-3执行完成</span><br><span class="line">主线程main开始执行...</span><br></pre></td></tr></table></figure>
+<h3 id="典型用法2"><a href="#典型用法2" class="headerlink" title="典型用法2"></a>典型用法2</h3><p>实现多个线程开始执行任务的最大<emp>并行性</emp>。注意是并行性，不是并发，强调的是多个线程在某一时刻同时开始执行。类似于赛跑，将多个线程放到起点，等待发令枪响，然后同时开跑。做法是初始化一个共享的 CountDownLatch(1)，将其计数器初始化为1，多个线程在开始执行任务前首先 <code>coundownlatch.await()</code>，当主线程调用 <code>countDown()</code> 时，计数器变为0，多个线程同时被唤醒。</p>
+<p>代码示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.CountDownLatch;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.Math.*;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.util.concurrent.Executors.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>: Xuxu</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span>: 2020-08-21 15:15</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CountdownLatchTest2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ExecutorService service = newCachedThreadPool();</span><br><span class="line">        <span class="keyword">final</span> CountDownLatch cdOrder = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">final</span> CountDownLatch cdAnswer = <span class="keyword">new</span> CountDownLatch(<span class="number">4</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++) &#123;</span><br><span class="line">            Runnable runnable = () -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;选手&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;正在等待裁判发布口令&quot;</span>);</span><br><span class="line">                    cdOrder.await();</span><br><span class="line">                    System.out.println(<span class="string">&quot;选手&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;已接受裁判口令&quot;</span>);</span><br><span class="line">                    Thread.sleep((<span class="keyword">long</span>) (random() * <span class="number">10000</span>));</span><br><span class="line">                    System.out.println(<span class="string">&quot;选手&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;到达终点&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    <span class="comment">// 很关键, 无论上面程序是否异常必须执行countDown,否则await无法释放</span></span><br><span class="line">                    cdAnswer.countDown();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line">            service.execute(runnable);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep((<span class="keyword">long</span>) (Math.random() * <span class="number">10000</span>));</span><br><span class="line">            System.out.println(<span class="string">&quot;裁判&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;即将发布口令&quot;</span>);</span><br><span class="line">            cdOrder.countDown();</span><br><span class="line">            System.out.println(<span class="string">&quot;裁判&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;已发送口令，正在等待所有选手到达终点&quot;</span>);</span><br><span class="line">            cdAnswer.await();</span><br><span class="line">            System.out.println(<span class="string">&quot;所有选手都到达终点&quot;</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;裁判&quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;汇总成绩排名&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        service.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">选手pool-1-thread-2正在等待裁判发布口令</span><br><span class="line">选手pool-1-thread-3正在等待裁判发布口令</span><br><span class="line">选手pool-1-thread-4正在等待裁判发布口令</span><br><span class="line">选手pool-1-thread-1正在等待裁判发布口令</span><br><span class="line">裁判main即将发布口令</span><br><span class="line">裁判main已发送口令，正在等待所有选手到达终点</span><br><span class="line">选手pool-1-thread-3已接受裁判口令</span><br><span class="line">选手pool-1-thread-1已接受裁判口令</span><br><span class="line">选手pool-1-thread-4已接受裁判口令</span><br><span class="line">选手pool-1-thread-2已接受裁判口令</span><br><span class="line">选手pool-1-thread-2到达终点</span><br><span class="line">选手pool-1-thread-1到达终点</span><br><span class="line">选手pool-1-thread-4到达终点</span><br><span class="line">选手pool-1-thread-3到达终点</span><br><span class="line">所有选手都到达终点</span><br><span class="line">裁判main汇总成绩排名</span><br></pre></td></tr></table></figure>
+
+<div class="article-footer fs14"><section id="references"><div class="header"><span>参考资料</span></div><div class="body"><ul><li class="post-title"><a href="https://www.cnblogs.com/tstd/p/4987935.html" target="_blank" rel="external nofollow noopener noreferrer">CountDownLatch（倒计时计数器）使用说明</a></li><li class="post-title"><a href="https://blog.csdn.net/joenqc/article/details/76794356" target="_blank" rel="external nofollow noopener noreferrer">CountDownLatch的简单理解</a></li></ul></div></section><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section><section id="share"><div class="header"><span>分享文章</span></div><div class="body"><div class="link"><input class="copy-area" readonly="true" id="copy-link" value="https://blog.hasaik.com/posts/cf9c1454.html" /></div><div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot)"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/b32ef3da1162a.svg"/></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://blog.hasaik.com/posts/cf9c1454.html&title=CountDownLatch 的理解和使用 - XiaoXuxuy&summary=最近在看多线程之间的通信，笔者我觉得自己的脑袋实在不够用了，很多东西看过就忘，所以今天抽出点时间码一遍 CountDownLatch 的理解和使用。
+此文也是从网上查找的资料，然后自己敲一遍，以便加深印象和更深入的理解。"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/80c07e4dbb303.svg"/></a><a class="social share-item email" href="mailto:?subject=CountDownLatch 的理解和使用 - XiaoXuxuy&amp;body=https://blog.hasaik.com/posts/cf9c1454.html"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/a1b00e20f425d.svg"/></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/8411ed322ced6.svg"/></a></div><div class="qrcode" id="qrcode-wechat" style="visibility:hidden;height:0"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://blog.hasaik.com/posts/cf9c1454.html"/></div></div></section></div>
+
+</article>
+
+<div class="related-wrap" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body"><div class="post-title h2"><a href="/posts/2375015f.html">Java 垃圾收集算法</a></div><div class="post-title fs14"><a href="/posts/f48050ed.html">更早一篇：Java 多线程的实现</a></div></section></div>
+
+<div class='related-wrap' id='related-posts'>
+    <section class='header'>
+      <div class='title cap theme'>您可能感兴趣的文章</div>
+    </section>
+    <section class='body'>
+    <div class="related-posts"><a class="item" href="/posts/6d42a1fc.html" title="CyclicBarrier 的理解和使用"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/XuxuGood/simple-blog-cdn@master/images/article-headimg/CyclicBarrier.png" /></div><span class="title">CyclicBarrier 的理解和使用</span><span class="excerpt">CyclicBarrier 是一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)。在涉及一组固定大小的线程程序中，这些线程必须不时地互相等待，此时 CyclicBarrier ...</span></a><a class="item" href="/posts/47cc5feb.html" title="Java 中 sleep() 和 wait() 的区别"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg" /></div><span class="title">Java 中 sleep() 和 wait() 的区别</span><span class="excerpt">用一小段代码来解释一下 Java 中 sleep() 和 wait() 的区别。</span></a><a class="item" href="/posts/c4fc7445.html" title="Java多线程情况下执行Shell命令"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg" /></div><span class="title">Java多线程情况下执行Shell命令</span><span class="excerpt">记录一下Java多线程情况下如何执行Shell命令。</span></a><a class="item" href="/posts/f48050ed.html" title="Java 多线程的实现"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg" /></div><span class="title">Java 多线程的实现</span><span class="excerpt">重温 Java 多线程的四种创建方式。</span></a></div></section></div>
+
+
+
+  <div class='related-wrap md' id="comments">
+    <div class='cmt-title cap theme'>
+      快来参与讨论吧
+    </div>
+    <div class='cmt-body utterances'>
+      
+
+<svg class="loading" style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
+
+<div id="utterances" repo="XuxuGood/utterances-blog-comments" issue-term="pathname" theme="github-light"></div>
+
+    </div>
+  </div>
+
+
+
+      
+<footer class="page-footer fs12"><hr><div><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<p>本站由 <a href="https://blog.hasaik.com/">@·银河小徐</a> 创建，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.0.0-rc.6">Stellar</a> 作为主题。</p>
+</div></footer>
+
+      <div class='float-panel mobile-only' style='display:none'>
+  <button type='button' class='sidebar-toggle mobile' onclick='sidebar.toggle()'>
+    <svg class="icon" viewBox="0 0 1228 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2849"><path d="M0 0m97.390199 0l973.901995 0q97.390199 0 97.390199 97.390199l0 0q0 97.390199-97.390199 97.3902l-973.901995 0q-97.390199 0-97.390199-97.3902l0 0q0-97.390199 97.390199-97.390199Z" p-id="2850"></path><path d="M0 389.560798m97.390199 0l973.901995 0q97.390199 0 97.390199 97.390199l0 0q0 97.390199-97.390199 97.3902l-973.901995 0q-97.390199 0-97.390199-97.3902l0 0q0-97.390199 97.390199-97.390199Z" p-id="2851"></path><path d="M0 779.121596m97.390199 0l973.901995 0q97.390199 0 97.390199 97.390199l0 0q0 97.390199-97.390199 97.390199l-973.901995 0q-97.390199 0-97.390199-97.390199l0 0q0-97.390199 97.390199-97.390199Z" p-id="2852"></path></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class='scripts'>
+    <script type="text/javascript">
+  stellar = {};
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.0.0-rc.6';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
+    sitesjs: '/js/plugins/sites.js',
+    friendsjs: '/js/plugins/friends.js',
+  };
+
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper/swiper-bundle.min.css","js":"https://unpkg.com/swiper/swiper-bundle.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":true,"js":"https://cdn.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://cdn.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://cdn.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+  <script>
+  function utterances(){
+    if(!document.getElementById("utterances"))return;
+    setTimeout(function() {
+      var checkUtterances = setInterval(function () {
+        var el = document.getElementById("utterances");
+        if (!el) return
+        clearInterval(checkUtterances)
+        try {
+          el.innerHTML="";
+        } catch (error) {}
+        var script = document.createElement('script');
+        script.src = 'https://utteranc.es/client.js';
+        const keys = ['repo', 'issue-term', 'issue-number', 'theme', 'label', 'crossorigin'];
+        keys.forEach((key, i) => {
+          if (el.attributes[key] && el.attributes[key].value) {
+            script.setAttribute(key, el.attributes[key].value);
+          }
+        });
+        el.appendChild(script);
+       }, 200)
+    });
+  }
+  utterances();
+</script>
+
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
