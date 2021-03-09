@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+
+<head>
+  <meta name="generator" content="Hexo 5.3.0">
+  <meta charset="utf-8">
+  
+
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  <link rel='dns-prefetch' href='https://cdn.jsdelivr.net'>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <title>Java实现MD5加盐加密和MD5与SHA-1混合加盐加密两种方式 - 银河小徐</title>
+
+  
+    <meta name="description" content="介绍两种加密方式，防止网站轻松破解我们的密码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java实现MD5加盐加密和MD5与SHA-1混合加盐加密两种方式">
+<meta property="og:url" content="https://blog.hasaik.com/posts/a7df3b40.html">
+<meta property="og:site_name" content="银河小徐">
+<meta property="og:description" content="介绍两种加密方式，防止网站轻松破解我们的密码。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.ax1x.com/2019/11/19/Mgdtjs.png">
+<meta property="article:published_time" content="2019-11-18T12:53:11.000Z">
+<meta property="article:modified_time" content="2021-03-09T14:24:56.385Z">
+<meta property="article:author" content="银河小徐">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="MD5">
+<meta property="article:tag" content="SHA-1">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/11/19/Mgdtjs.png">
+  
+  
+
+  <!-- feed -->
+  
+    <link rel="alternate" href="/atom.xml" title="银河小徐" type="application/atom+xml">
+  
+
+  
+    
+<link rel="stylesheet" href="/css/main.css">
+
+  
+
+  
+    
+      <meta name='theme-color' content='#FFFFFF'>
+    
+      <meta name='msapplication-TileColor' content='#1BC3FB'>
+    
+      <link rel='shortcut icon' type='image/x-icon' href='https://cdn.jsdelivr.net/gh/XuxuGood/simple-blog-cdn@master/images/site-img/favicon.png'>
+    
+      <script src='https://cdn.jsdelivr.net/npm/jquery@3.5/dist/jquery.min.js'></script>
+    
+  
+</head>
+
+<body theme='light'>
+  
+
+
+  <div class='l_body' id='start'>
+    <aside class='l_left'>
+    
+
+<header class='header'>
+  <div class='logo-wrap'>
+  
+    <a class='avatar' href='/about/'><img no-lazy src='/images/avatar.jpg'/></a>
+  
+  
+    <a class='title' href='/'>银河小徐</a>
+  
+</div>
+
+  <nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/wiki/">项目</a><a class="nav-item" href="/notes/">笔记</a><a class="nav-item" href="/about/">更多</a></nav>
+</header>
+
+<div class='widgets'>
+  
+    
+      
+      
+
+  <div class='widget-wrap' id='toc'>
+    <div class='widget-header h4 dis-select'>
+      <span class='name'>
+        
+          本文目录
+        
+      </span>
+      <a class='cap-action' id='s-top' title='回到顶部' href='#start'>
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10505"><path d="M884.526 163.323H208.881c-30.516 0-55.25 24.934-55.25 55.685s24.734 55.685 55.25 55.685h675.645c30.515 0 55.255-24.93 55.255-55.685s-24.74-55.685-55.255-55.685zM568.253 336.87a56.765 56.765 0 0 0-4.06-3.701c-0.63-0.517-1.29-0.968-1.935-1.454-0.799-0.605-1.577-1.224-2.406-1.787-0.779-0.528-1.583-0.978-2.386-1.46-0.748-0.45-1.485-0.926-2.253-1.341-0.81-0.44-1.649-0.814-2.483-1.208-0.8-0.384-1.588-0.784-2.407-1.132-0.814-0.338-1.643-0.61-2.463-0.906-0.875-0.323-1.745-0.66-2.641-0.932-0.825-0.25-1.66-0.435-2.489-0.645-0.916-0.236-1.817-0.492-2.75-0.681-0.962-0.19-1.935-0.307-2.902-0.445-0.814-0.118-1.618-0.272-2.442-0.354a55.163 55.163 0 0 0-5.438-0.276h-0.015c-0.267 0-0.528 0.036-0.794 0.036a54.856 54.856 0 0 0-39.86 16.271l-279.413 281.61c-21.576 21.75-21.576 57.006 0 78.756a54.876 54.876 0 0 0 39.07 16.312 54.835 54.835 0 0 0 39.066-16.312l186.67-188.145V898.09c0 30.75 24.74 55.685 55.256 55.685s55.255-24.934 55.255-55.685v-387.42L769.526 697.22a54.871 54.871 0 0 0 39.065 16.312 54.835 54.835 0 0 0 39.066-16.312c21.576-21.75 21.576-57.006 0-78.756L568.253 336.87z" p-id="10506"></path></svg>
+      </a>
+    </div>
+    <div class='widget-body fs14 post'>
+      
+        <div class='doc-tree active'>
+          <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MD5%E5%8A%A0%E7%9B%90%E5%8A%A0%E5%AF%86"><span class="toc-text">MD5加盐加密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MD5%E5%92%8CSHA-1%E6%B7%B7%E5%90%88%E5%8A%A0%E7%9B%90%E5%8A%A0%E5%AF%86"><span class="toc-text">MD5和SHA-1混合加盐加密</span></a></li></ol>
+        </div>
+      
+    </div>
+  </div>
+
+
+    
+  
+    
+      
+      <div class='widget-wrap' id='recent'>
+  <div class='widget-header h4 dis-select'>
+    <span class='name'>最近更新</span>
+    
+      <a class='cap-action' id='rss' title='Subscribe' href='/atom.xml'>
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8938"><path d="M800.966 947.251c0-404.522-320.872-732.448-716.69-732.448V62.785c477.972 0 865.44 395.987 865.44 884.466h-148.75z m-162.273 0h-148.74c0-228.98-181.628-414.598-405.678-414.598v-152.01c306.205 0 554.418 253.68 554.418 566.608z m-446.24-221.12c59.748 0 108.189 49.503 108.189 110.557 0 61.063-48.44 110.563-108.188 110.563-59.747 0-108.18-49.5-108.18-110.563 0-61.054 48.433-110.556 108.18-110.556z" p-id="8939"></path></svg>
+      </a>
+    
+  </div>
+  <div class='widget-body fs14'>
+    
+    
+      <div class='post-title'>
+        <a href="/posts/45c03634.html">
+          
+            Spring Boot 通用解决 LocalDateTime 转为字符串后中间含“T”
+          
+        </a>
+      </div>
+    
+      <div class='post-title'>
+        <a href="/posts/3fe685e0.html">
+          
+            Jenkins + Gitlab + Docker + Spring Boot 实现自动部署
+          
+        </a>
+      </div>
+    
+      <div class='post-title'>
+        <a href="/posts/9b280ea3.html">
+          
+            Hexo中使用emoji表情
+          
+        </a>
+      </div>
+    
+      <div class='post-title'>
+        <a href="/posts/2b56997e.html">
+          
+            异常：java.security.InvalidKeyException:Illegal key size
+          
+        </a>
+      </div>
+    
+      <div class='post-title'>
+        <a href="/posts/b85c80d5.html">
+          
+            基于HttpClient实现java中实现数据传输及文件传输
+          
+        </a>
+      </div>
+    
+  </div>
+</div>
+
+    
+  
+</div>
+<footer class="footer"><div class="social-wrap dis-select"><a class="social" href="/atom.xml" rel="noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/25678f144c438.svg"/></a><a class="social" href="https://github.com/XuxuGood" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/08a41b181ce68.svg"/></a><a class="social" href="https://music.163.com/#/user/home?id=109933387" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/cf1ae151f9e83.svg"/></a><a class="social" href="/comments/" rel="noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/942ebbf1a4b91.svg"/></a></div></footer>
+
+    </aside>
+    <div class='l_main'>
+      
+
+      
+
+
+  <div class='bread-nav fs12'>
+  
+    
+    <div id='breadcrumb' style="color:#c921f3">
+      <a class='cap breadcrumb' href='/'>主页</a>
+      <span class="sep"></span>
+      <a class='cap breadcrumb' href='/'>文章</a>
+      
+        <span class="sep"></span>
+        <a class="cap breadcrumb-link" href="/categories/Java/">Java</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/Java/%E5%8A%A0%E5%AF%86%E5%AE%89%E5%85%A8/">加密安全</a>
+      
+    </div>
+    <div id='post-meta'>
+      发布于&nbsp;<time datetime='2019-11-18T12:53:11.000Z'>2019年11月18日</time>
+    </div>
+  
+  </div>
+
+
+<article class='content md post reveal'>
+<h1 class="article-title"><span>Java实现MD5加盐加密和MD5与SHA-1混合加盐加密两种方式</span></h1>
+<p>现在一般的MD5加密在网上随随便便就能够解密，解密的网站有以下几个：</p>
+<div class="tag-plugin link dis-select"><a class="link-card" title="PMD5" href="http://pmd5.com/" target="_blank" rel="external nofollow noopener noreferrer"><div class="left"><span class="title fs14">PMD5</span><span class="url fs12">http://pmd5.com/</span></div><div class="right"><div class="lazy img" data-bg="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/link/8f277b4ee0ecd.svg"></div></div></a></div>
+
+<div class="tag-plugin link dis-select"><a class="link-card" title="CMD5" href="http://www.cmd5.com/" target="_blank" rel="external nofollow noopener noreferrer"><div class="left"><span class="title fs14">CMD5</span><span class="url fs12">http://www.cmd5.com/</span></div><div class="right"><div class="lazy img" data-bg="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/link/8f277b4ee0ecd.svg"></div></div></a></div>
+
+<div class="tag-plugin link dis-select"><a class="link-card" title="站长工具" href="http://tool.chinaz.com/tools/md5.aspx" target="_blank" rel="external nofollow noopener noreferrer"><div class="left"><span class="title fs14">站长工具</span><span class="url fs12">http://tool.chinaz.com/tools/md5.aspx</span></div><div class="right"><div class="lazy img" data-bg="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/link/8f277b4ee0ecd.svg"></div></div></a></div>
+
+<p>好了介绍了这么多密码解密的网站，现在我们来介绍如何提高密码的安全性，来防止上面的网站轻松破解我们的密码。</p>
+<h2 id="MD5加盐加密"><a href="#MD5加盐加密" class="headerlink" title="MD5加盐加密"></a>MD5加盐加密</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.scaffolding.demo.utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.security.MessageDigest;</span><br><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>: Xuxu</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span>: 2019-11-18 11:20</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MD5Util</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * byte[]字节数组 转换成 十六进制字符串</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> arr 要转换的byte[]字节数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> String 返回十六进制字符串</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">hex</span><span class="params">(<span class="keyword">byte</span>[] arr)</span> </span>&#123;</span><br><span class="line">        StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length; ++i) &#123;</span><br><span class="line">            sb.append(Integer.toHexString((arr[i] &amp; <span class="number">0xFF</span>) | <span class="number">0x100</span>).substring(<span class="number">1</span>, <span class="number">3</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * MD5加密,并把结果由字节数组转换成十六进制字符串</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> str 要加密的内容</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> String 返回加密后的十六进制字符串</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">md5Hex</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            MessageDigest md = MessageDigest.getInstance(<span class="string">&quot;MD5&quot;</span>);</span><br><span class="line">            <span class="keyword">byte</span>[] digest = md.digest(str.getBytes());</span><br><span class="line">            <span class="keyword">return</span> hex(digest);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            System.out.println(e.toString());</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成含有随机盐的密码</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> password 要加密的密码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> String 含有随机盐的密码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getSaltMD5</span><span class="params">(String password)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 生成一个16位的随机数</span></span><br><span class="line">        Random random = <span class="keyword">new</span> Random();</span><br><span class="line">        StringBuilder sBuilder = <span class="keyword">new</span> StringBuilder(<span class="number">16</span>);</span><br><span class="line">        sBuilder.append(random.nextInt(<span class="number">99999999</span>)).append(random.nextInt(<span class="number">99999999</span>));</span><br><span class="line">        <span class="keyword">int</span> len = sBuilder.length();</span><br><span class="line">        <span class="keyword">if</span> (len &lt; <span class="number">16</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span> - len; i++) &#123;</span><br><span class="line">                sBuilder.append(<span class="string">&quot;0&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 生成最终的加密盐</span></span><br><span class="line">        String salt = sBuilder.toString();</span><br><span class="line">        password = md5Hex(password + salt);</span><br><span class="line">        <span class="keyword">char</span>[] cs = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">48</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">48</span>; i += <span class="number">3</span>) &#123;</span><br><span class="line">            cs[i] = password.charAt(i / <span class="number">3</span> * <span class="number">2</span>);</span><br><span class="line">            <span class="keyword">char</span> c = salt.charAt(i / <span class="number">3</span>);</span><br><span class="line">            cs[i + <span class="number">1</span>] = c;</span><br><span class="line">            cs[i + <span class="number">2</span>] = password.charAt(i / <span class="number">3</span> * <span class="number">2</span> + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> String.valueOf(cs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 验证加盐后是否和原密码一致</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> password 原密码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> password 加密之后的密码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> boolean true表示和原密码一致   false表示和原密码不一致</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">getSaltverifyMD5</span><span class="params">(String password, String md5str)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">char</span>[] cs1 = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">32</span>];</span><br><span class="line">        <span class="keyword">char</span>[] cs2 = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">16</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">48</span>; i += <span class="number">3</span>) &#123;</span><br><span class="line">            cs1[i / <span class="number">3</span> * <span class="number">2</span>] = md5str.charAt(i);</span><br><span class="line">            cs1[i / <span class="number">3</span> * <span class="number">2</span> + <span class="number">1</span>] = md5str.charAt(i + <span class="number">2</span>);</span><br><span class="line">            cs2[i / <span class="number">3</span>] = md5str.charAt(i + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        String Salt = <span class="keyword">new</span> String(cs2);</span><br><span class="line">        <span class="keyword">return</span> md5Hex(password + Salt).equals(String.valueOf(cs1));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 原密码</span></span><br><span class="line">        String plaintext = <span class="string">&quot;123456&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取加盐后的MD5值</span></span><br><span class="line">        String ciphertext = MD5Util.getSaltMD5(plaintext);</span><br><span class="line">        System.out.println(<span class="string">&quot;加盐后MD5：&quot;</span> + ciphertext);</span><br><span class="line">        System.out.println(<span class="string">&quot;是否是同一字符串:&quot;</span> + MD5Util.getSaltverifyMD5(plaintext, ciphertext));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<p>加盐后MD5：e9a97f49db0f20911ab1d815624b33e75a3236e76040f509</p>
+<p>是否是同一字符串：true</p>
+<p>这时，我们可以把加盐后的 加密密码 拿到 MD5加密网上去验证是否能够解密（这里我只列举其中一个网站进行验证，你们也可以自行拿去各个MD5加密网站上去验证）</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://s2.ax1x.com/2019/11/19/Mgdtjs.png" alt="md5"></p>
+<p>我们可以看到，MD5加密网站已经无法破解我们加密的密码了，所以MD5加盐加密的密码相对来说还是比较安全的。</p>
+<h2 id="MD5和SHA-1混合加盐加密"><a href="#MD5和SHA-1混合加盐加密" class="headerlink" title="MD5和SHA-1混合加盐加密"></a>MD5和SHA-1混合加盐加密</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.scaffolding.demo.utils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.UnsupportedEncodingException;</span><br><span class="line"><span class="keyword">import</span> java.security.MessageDigest;</span><br><span class="line"><span class="keyword">import</span> java.security.NoSuchAlgorithmException;</span><br><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>: Xuxu</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span>: 2019-11-18 13:15</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MD5Utils</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * md5和sha-1混合加密</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> inputText 要加密的内容</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> String md5和sha-1混合加密之后的密码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">md5AndSha</span><span class="params">(String inputText)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sha(md5(inputText));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * md5加密</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> inputText 要加密的内容</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> String  md5加密之后的密码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">md5</span><span class="params">(String inputText)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> encrypt(inputText, <span class="string">&quot;md5&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * sha-1加密</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> inputText 要加密的内容</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> sha-1加密之后的密码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">sha</span><span class="params">(String inputText)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> encrypt(inputText, <span class="string">&quot;sha-1&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * md5或者sha-1加密</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> inputText     要加密的内容</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> algorithmName 加密算法名称：md5或者sha-1，不区分大小写</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> String  md5或者sha-1加密之后的结果</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">encrypt</span><span class="params">(String inputText, String algorithmName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (inputText == <span class="keyword">null</span> || <span class="string">&quot;&quot;</span>.equals(inputText.trim())) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;请输入要加密的内容&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (algorithmName == <span class="keyword">null</span> || <span class="string">&quot;&quot;</span>.equals(algorithmName.trim())) &#123;</span><br><span class="line">            algorithmName = <span class="string">&quot;md5&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        String encryptText = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            MessageDigest m = MessageDigest.getInstance(algorithmName);</span><br><span class="line">            m.update(inputText.getBytes(<span class="string">&quot;UTF8&quot;</span>));</span><br><span class="line">            <span class="keyword">byte</span> s[] = m.digest();</span><br><span class="line">            <span class="keyword">return</span> hex(s);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchAlgorithmException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (UnsupportedEncodingException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> encryptText;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * byte[]字节数组 转换成 十六进制字符串</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> arr 要转换的byte[]字节数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> String 返回十六进制字符串</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">hex</span><span class="params">(<span class="keyword">byte</span>[] arr)</span> </span>&#123;</span><br><span class="line">        StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length; ++i) &#123;</span><br><span class="line">            sb.append(Integer.toHexString((arr[i] &amp; <span class="number">0xFF</span>) | <span class="number">0x100</span>).substring(<span class="number">1</span>, <span class="number">3</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成含有随机盐的密码</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> password 要加密的密码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> String 含有随机盐的密码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getSaltMd5AndSha</span><span class="params">(String password)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 生成一个16位的随机数</span></span><br><span class="line">        Random random = <span class="keyword">new</span> Random();</span><br><span class="line">        StringBuilder sBuilder = <span class="keyword">new</span> StringBuilder(<span class="number">16</span>);</span><br><span class="line">        sBuilder.append(random.nextInt(<span class="number">99999999</span>)).append(random.nextInt(<span class="number">99999999</span>));</span><br><span class="line">        <span class="keyword">int</span> len = sBuilder.length();</span><br><span class="line">        <span class="keyword">if</span> (len &lt; <span class="number">16</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span> - len; i++) &#123;</span><br><span class="line">                sBuilder.append(<span class="string">&quot;0&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 生成最终的加密盐</span></span><br><span class="line">        String salt = sBuilder.toString();</span><br><span class="line">        password = md5AndSha(password + salt);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">char</span>[] cs = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">48</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">48</span>; i += <span class="number">3</span>) &#123;</span><br><span class="line">            cs[i] = password.charAt(i / <span class="number">3</span> * <span class="number">2</span>);</span><br><span class="line">            <span class="keyword">char</span> c = salt.charAt(i / <span class="number">3</span>);</span><br><span class="line">            cs[i + <span class="number">1</span>] = c;</span><br><span class="line">            cs[i + <span class="number">2</span>] = password.charAt(i / <span class="number">3</span> * <span class="number">2</span> + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> String.valueOf(cs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 验证加盐后是否和原密码一致</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> password 原密码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> password 加密之后的密码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> boolean true表示和原密码一致   false表示和原密码不一致</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">getSaltverifyMd5AndSha</span><span class="params">(String password, String md5str)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">char</span>[] cs1 = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">32</span>];</span><br><span class="line">        <span class="keyword">char</span>[] cs2 = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">16</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">48</span>; i += <span class="number">3</span>) &#123;</span><br><span class="line">            cs1[i / <span class="number">3</span> * <span class="number">2</span>] = md5str.charAt(i);</span><br><span class="line">            cs1[i / <span class="number">3</span> * <span class="number">2</span> + <span class="number">1</span>] = md5str.charAt(i + <span class="number">2</span>);</span><br><span class="line">            cs2[i / <span class="number">3</span>] = md5str.charAt(i + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        String salt = <span class="keyword">new</span> String(cs2);</span><br><span class="line">        String encrypPassword = md5AndSha(password + salt);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 加密密码去掉最后8位数</span></span><br><span class="line">        encrypPassword = encrypPassword.substring(<span class="number">0</span>, encrypPassword.length() - <span class="number">8</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> encrypPassword.equals(String.valueOf(cs1));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 原密码</span></span><br><span class="line">        String plaintext = <span class="string">&quot;123456&quot;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取加盐后的MD5值</span></span><br><span class="line">        String ciphertext = MD5Utils.getSaltMd5AndSha(plaintext);</span><br><span class="line">        System.out.println(<span class="string">&quot;加盐后MD5：&quot;</span> + ciphertext);</span><br><span class="line">        System.out.println(<span class="string">&quot;是否是同一字符串:&quot;</span> + MD5Utils.getSaltverifyMd5AndSha(plaintext, ciphertext));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>眼睛比较明亮的朋友，可能会发现 MD5 和 SHA-1 混合加盐加密 与 MD5 加盐加密 的 getSaltverifyMD5(String password, String md5str) 方法有些不同，是的，MD5和SHA-1混合加盐加密 的 getSaltverifyMD5(String password, String md5str) 多了下面这一行代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 加密密码去掉最后8位数</span></span><br><span class="line">encrypPassword = encrypPassword.substring(<span class="number">0</span> , encrypPassword.length() - <span class="number">8</span>);</span><br></pre></td></tr></table></figure>
+<p>就会有人问了，为什么要去掉加密密码的最后8位数，而MD5加盐加密却不要？其实这是有原因的</p>
+<p>我们可以看到密码为 123456 经过 MD5、MD5和SHA-1 混合加密的结果：</p>
+<p>&emsp;&emsp;MD5 ：e10adc3949ba59abbe56e057f20f883e （32位数）</p>
+<p>&emsp;&emsp;MD5和SHA-1 ：10470c3b4b1fed12c3baac014be15fac67c6e815  （40位数）</p>
+<p>发现有什么不同了没？两种加密之后的密码长度是不是 不一样了 经过MD5加密之后的密码长度为32，而MD5和SHA-1的为40</p>
+<p>而我们在 getSaltMd5AndSha （与getSaltMD5代码相同，只是方法名称不一样）中定义的</p>
+<p>盐长度为 16位数（即 StringBuilder sBuilder = new StringBuilder(16) ;）</p>
+<p>加盐加密后的密码长度为 48位数 (即  char[] cs = new char[48]; )</p>
+<p>加盐加密后的密码长度 =  盐长度 + MD5加密的密码长度 (即  48 = 16 + 32 )  </p>
+<p>长度刚刚等于48位数，所以char[] cs 刚好可以把 密码和盐全部都存储起来，可是MD5和SHA-1 加密的密码长度为40，即 </p>
+<p>48 &lt; 40 + 16，还会有八位数不能够存储到char[] cs 中, 这也就意味着 char[] cs 只能够存储 MD5和SHA-1 加密密码的前32位数 和 16位数的盐，MD5和SHA-1 加密密码的最后八位会丢失，而在验证加盐后是否和原密码一致的getSaltverifyMd5AndSha(String password, String md5str)方法中，我们定义的 char[] cs1 = new char[32];（即去掉盐之后的MD5和SHA-1 加密密码）只有32位数，而MD5和SHA-1 加密密码实际位数有40位数，那么在进行encrypPassword.equals(String.valueOf(cs1) ) 时，就会返回false，即原密码与加密密码验证不一致。</p>
+<p>所以要解决这个问题，就是把MD5和SHA-1 加密的密码结果 去掉最后8位数，再进行比较，这样就可以验证原密码是否与加密密码一致了。</p>
+
+
+<div class="article-footer fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div></section><section id="share"><div class="header"><span>分享文章</span></div><div class="body"><div class="link"><input class="copy-area" readonly="true" id="copy-link" value="https://blog.hasaik.com/posts/a7df3b40.html" /></div><div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot)"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/b32ef3da1162a.svg"/></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://blog.hasaik.com/posts/a7df3b40.html&title=Java实现MD5加盐加密和MD5与SHA-1混合加盐加密两种方式 - 银河小徐&summary=介绍两种加密方式，防止网站轻松破解我们的密码。"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/80c07e4dbb303.svg"/></a><a class="social share-item email" href="mailto:?subject=Java实现MD5加盐加密和MD5与SHA-1混合加盐加密两种方式 - 银河小徐&amp;body=https://blog.hasaik.com/posts/a7df3b40.html"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/a1b00e20f425d.svg"/></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/8411ed322ced6.svg"/></a></div><div class="qrcode" id="qrcode-wechat" style="visibility:hidden;height:0"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://blog.hasaik.com/posts/a7df3b40.html"/></div></div></section></div>
+
+</article>
+
+<div class="related-wrap" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body"><div class="post-title h2"><a href="/posts/c4782247.html">Java base64加密解密</a></div><div class="post-title fs14"><a href="/posts/9c9b482b.html">更早一篇：Hexo博客+Next主题鼠标点击特效</a></div></section></div>
+
+<div class='related-wrap' id='related-posts'>
+    <section class='header'>
+      <div class='title cap theme'>您可能感兴趣的文章</div>
+    </section>
+    <section class='body'>
+    <div class="related-posts"><a class="item" href="/posts/bc6f4faf.html" title="Java代替if和switch的方法"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg" /></div><span class="title">Java代替if和switch的方法</span><span class="excerpt">如何优雅的代替Java中的if和switch语句。</span></a><a class="item" href="/posts/cf9c1454.html" title="CountDownLatch 的理解和使用"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/XuxuGood/simple-blog-cdn@master/images/article-headimg/CountDownLatch.png" /></div><span class="title">CountDownLatch 的理解和使用</span><span class="excerpt">最近在看多线程之间的通信，笔者我觉得自己的脑袋实在不够用了，很多东西看过就忘，所以今天抽出点时间码一遍 CountDownLatch 的理解和使用。
+此文也是从网上查找的资料，然后自己敲一遍，以便加深印象和更深入的理解。</span></a><a class="item" href="/posts/c4782247.html" title="Java base64加密解密"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg" /></div><span class="title">Java base64加密解密</span><span class="excerpt">Base 64主要用途不是加密，而是把一些二进制数转成普通字符，方便在网络上传输。 由于一些二进制字符在传输协议中属于控制字符，不能直接传送，所以需要转换一下才可以。由于某些系统中只能使用ASCII字符，Base64就是用来将非ASC...</span></a><a class="item" href="/posts/611a48d3.html" title="Java下载网络文件到指定目录"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg" /></div><span class="title">Java下载网络文件到指定目录</span><span class="excerpt">Java下载网络文件到指定目录</span></a></div></section></div>
+
+
+
+  <div class='related-wrap md' id="comments">
+    <div class='cmt-title cap theme'>
+      快来参与讨论吧
+    </div>
+    <div class='cmt-body utterances'>
+      
+
+<svg class="loading" style="vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"></path></svg>
+
+<div id="utterances" repo="XuxuGood/utterances-blog-comments" issue-term="pathname" theme="github-light"></div>
+
+    </div>
+  </div>
+
+
+
+      
+<footer class="page-footer fs12"><hr><div><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+<p>本站由 <a href="https://blog.hasaik.com/">@银河小徐</a> 创建，使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.0.0-rc.6">Stellar</a> 作为主题。</p>
+</div></footer>
+
+      <div class='float-panel mobile-only' style='display:none'>
+  <button type='button' class='sidebar-toggle mobile' onclick='sidebar.toggle()'>
+    <svg class="icon" viewBox="0 0 1228 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2849"><path d="M0 0m97.390199 0l973.901995 0q97.390199 0 97.390199 97.390199l0 0q0 97.390199-97.390199 97.3902l-973.901995 0q-97.390199 0-97.390199-97.3902l0 0q0-97.390199 97.390199-97.390199Z" p-id="2850"></path><path d="M0 389.560798m97.390199 0l973.901995 0q97.390199 0 97.390199 97.390199l0 0q0 97.390199-97.390199 97.3902l-973.901995 0q-97.390199 0-97.390199-97.3902l0 0q0-97.390199 97.390199-97.390199Z" p-id="2851"></path><path d="M0 779.121596m97.390199 0l973.901995 0q97.390199 0 97.390199 97.390199l0 0q0 97.390199-97.390199 97.390199l-973.901995 0q-97.390199 0-97.390199-97.390199l0 0q0-97.390199 97.390199-97.390199Z" p-id="2852"></path></svg>
+  </button>
+</div>
+
+    </div>
+  </div>
+  <div class='scripts'>
+    <script type="text/javascript">
+  stellar = {};
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.0.0-rc.6';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
+    sitesjs: '/js/plugins/sites.js',
+    friendsjs: '/js/plugins/friends.js',
+  };
+
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper/swiper-bundle.min.css","js":"https://unpkg.com/swiper/swiper-bundle.min.js"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":true,"js":"https://cdn.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://cdn.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://cdn.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }
+</script>
+
+<!-- required -->
+
+  
+<script src="/js/main.js" async></script>
+
+
+
+<!-- optional -->
+
+  <script>
+  function utterances(){
+    if(!document.getElementById("utterances"))return;
+    setTimeout(function() {
+      var checkUtterances = setInterval(function () {
+        var el = document.getElementById("utterances");
+        if (!el) return
+        clearInterval(checkUtterances)
+        try {
+          el.innerHTML="";
+        } catch (error) {}
+        var script = document.createElement('script');
+        script.src = 'https://utteranc.es/client.js';
+        const keys = ['repo', 'issue-term', 'issue-number', 'theme', 'label', 'crossorigin'];
+        keys.forEach((key, i) => {
+          if (el.attributes[key] && el.attributes[key].value) {
+            script.setAttribute(key, el.attributes[key].value);
+          }
+        });
+        el.appendChild(script);
+       }, 200)
+    });
+  }
+  utterances();
+</script>
+
+
+
+
+<!-- inject -->
+
+
+  </div>
+</body>
+</html>
