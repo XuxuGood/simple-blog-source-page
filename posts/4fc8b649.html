@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 5.3.0"><meta charset="utf-8"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><meta name="renderer" content="webkit"><meta name="force-rendering" content="webkit"><meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"><meta name="HandheldFriendly" content="True"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>Vue v-for list数据循环 每3或者（n）个一组 - 银河小徐</title><meta name="description" content="Vue 使用 v-for 进行数据循环 每3或者（n）个一组。"><meta property="og:type" content="article"><meta property="og:title" content="Vue v-for list数据循环 每3或者（n）个一组"><meta property="og:url" content="https://hasaik.com/posts/4fc8b649.html"><meta property="og:site_name" content="银河小徐"><meta property="og:description" content="Vue 使用 v-for 进行数据循环 每3或者（n）个一组。"><meta property="og:locale" content="zh_CN"><meta property="article:published_time" content="2020-07-06T15:42:46.000Z"><meta property="article:modified_time" content="2021-03-19T15:45:09.865Z"><meta property="article:author" content="银河小徐"><meta property="article:tag" content="Vue"><meta name="twitter:card" content="summary"><link rel="alternate" href="/atom.xml" title="银河小徐" type="application/atom+xml"><link rel="stylesheet" href="/css/main.css"><meta name="theme-color" content="#FFFFFF"><meta name="msapplication-TileColor" content="#1BC3FB"><link rel="shortcut icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/XuxuGood/simple-blog-cdn@master/images/site-img/favicon.png"><script src="https://cdn.jsdelivr.net/npm/jquery@3.5/dist/jquery.min.js"></script></head><body theme="light"><div class="l_body" id="start"><aside class="l_left"><header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><img no-lazy src="/images/avatar.jpg" onerror="javascript:this.classList.add('error');this.src='https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/image/2659360.svg';"></a><a class="title" href="/">银河小徐</a></div><nav class="menu dis-select"><a class="nav-item active" href="/">文章</a><a class="nav-item" href="/friends/">友链</a><a class="nav-item" href="/comments/">留言</a><a class="nav-item" href="/about/">更多</a></nav></header><div class="widgets"><div class="widget-wrap" id="recent"><div class="widget-header h4 dis-select"><span class="name">最近更新</span><a class="cap-action" id="rss" title="Subscribe" href="/atom.xml"><svg class="icon" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8938"><path d="M800.966 947.251c0-404.522-320.872-732.448-716.69-732.448V62.785c477.972 0 865.44 395.987 865.44 884.466h-148.75z m-162.273 0h-148.74c0-228.98-181.628-414.598-405.678-414.598v-152.01c306.205 0 554.418 253.68 554.418 566.608z m-446.24-221.12c59.748 0 108.189 49.503 108.189 110.557 0 61.063-48.44 110.563-108.188 110.563-59.747 0-108.18-49.5-108.18-110.563 0-61.054 48.433-110.556 108.18-110.556z" p-id="8939"/></svg></a></div><div class="widget-body fs14"><div class="post-title reveal"><div class="cap">更新于&nbsp;<time>2021年03月19日</time></div><a href="/posts/4598d3ed.html">使用SpringBoot AOP 记录操作日志、异常日志</a></div><div class="post-title reveal"><div class="cap">更新于&nbsp;<time>2021年03月19日</time></div><a href="/posts/3e5a3bb6.html">基于 TravisCI 实现 Hexo 在 Github 和 Coding 的同步部署</a></div><div class="post-title reveal"><div class="cap">更新于&nbsp;<time>2021年03月19日</time></div><a href="/posts/b85c80d5.html">基于HttpClient实现java中实现数据传输及文件传输</a></div><div class="post-title reveal"><div class="cap">更新于&nbsp;<time>2021年03月19日</time></div><a href="/posts/2b56997e.html">异常：java.security.InvalidKeyException:Illegal key size</a></div><div class="post-title reveal"><div class="cap">更新于&nbsp;<time>2021年03月19日</time></div><a href="/posts/45c03634.html">Spring Boot 通用解决 LocalDateTime 转为字符串后中间含“T”</a></div></div></div></div><footer class="footer"><div class="social-wrap dis-select"><a class="social" href="/atom.xml" rel="noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/25678f144c438.svg"></a><a class="social" href="https://github.com/XuxuGood" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/08a41b181ce68.svg"></a><a class="social" href="https://music.163.com/#/user/home?id=109933387" target="_blank" rel="external nofollow noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/cf1ae151f9e83.svg"></a><a class="social" href="/comments/" rel="noopener noreferrer"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/942ebbf1a4b91.svg"></a></div></footer></aside><div class="l_main"><div class="bread-nav fs12"><div id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a> <span class="sep"></span> <a class="cap breadcrumb" href="/">文章</a> <span class="sep"></span> <a class="cap breadcrumb-link" href="/categories/Vue/">Vue</a></div><div id="post-meta">发布于&nbsp;<time datetime="2020-07-06T15:42:46.000Z">2020年07月06日</time></div></div><article class="content md post"><h1 class="article-title"><span>Vue v-for list数据循环 每3或者（n）个一组</span></h1><p>template 代码：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;el-carousel-item v-for=<span class="string">&quot;(item,index) in listTemp&quot;</span> :key=<span class="string">&quot;index&quot;</span>&gt;</span><br><span class="line">  &lt;div style=<span class="string">&quot;margin-left: 17%;margin-right: 10%;margin-top: 20px;&quot;</span>&gt;</span><br><span class="line">    &lt;div v-for=<span class="string">&quot;o in item&quot;</span> :key=<span class="string">&quot;o&quot;</span> style=<span class="string">&quot;display:inline;padding: 0.6rem&quot;</span>&gt;</span><br><span class="line">      &lt;el-card :body-style=<span class="string">&quot;&#123; padding: &#x27;0px&#x27; &#125;&quot;</span> style=<span class="string">&quot;width: 20%;max-height: 200px&quot;</span> @click.native=<span class="string">&quot;showDrawer(o)&quot;</span>&gt;</span><br><span class="line">        &lt;img :src=<span class="string">&quot;o.imgPath&quot;</span> class=<span class="string">&quot;image&quot;</span>&gt;</span><br><span class="line">        &lt;div style=<span class="string">&quot;padding: 10px;font-size:14px;display: flex;justify-content: space-between&quot;</span>&gt;</span><br><span class="line">          &lt;span&gt;&#123;&#123; o.eventdate &#125;&#125;&lt;/span&gt;</span><br><span class="line">          &lt;span&gt;&#123;&#123; o.position &#125;&#125;&lt;/span&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">      &lt;/el-card&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/el-carousel-item&gt;</span><br></pre></td></tr></table></figure><p>computed 代码：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">computed: &#123;</span><br><span class="line">    <span class="function"><span class="title">listTemp</span></span>() &#123;</span><br><span class="line">      <span class="built_in">let</span> index = 0</span><br><span class="line">      const count = 4</span><br><span class="line">      const arrTemp = []</span><br><span class="line">      const experts = this.alarmImgList</span><br><span class="line">      <span class="keyword">for</span> (<span class="built_in">let</span> i = 0; i &lt; this.alarmImgList.length; i++) &#123;</span><br><span class="line">        index = parseInt(i / count)</span><br><span class="line">        <span class="keyword">if</span> (arrTemp.length &lt;= index) &#123;</span><br><span class="line">          arrTemp.push([])</span><br><span class="line">        &#125;</span><br><span class="line">        arrTemp[index].push(experts[i])</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">return</span> arrTemp</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><div class="article-footer fs14"><section id="license"><div class="header"><span>许可协议</span></div><div class="body"><p>本文采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p></div></section><section id="share"><div class="header"><span>分享文章</span></div><div class="body"><div class="link"><input class="copy-area" readonly id="copy-link" value="https://hasaik.com/posts/4fc8b649.html"></div><div class="social-wrap dis-select"><a class="social share-item wechat" onclick="util.toggle(&quot;qrcode-wechat&quot)"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/b32ef3da1162a.svg"></a><a class="social share-item weibo" target="_blank" rel="external nofollow noopener noreferrer" href="https://service.weibo.com/share/share.php?url=https://hasaik.com/posts/4fc8b649.html&title=Vue v-for list数据循环 每3或者（n）个一组 - 银河小徐&summary=Vue 使用 v-for 进行数据循环 每3或者（n）个一组。"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/80c07e4dbb303.svg"></a><a class="social share-item email" href="mailto:?subject=Vue v-for list数据循环 每3或者（n）个一组 - 银河小徐&amp;body=https://hasaik.com/posts/4fc8b649.html"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/a1b00e20f425d.svg"></a><a class="social share-item link" onclick="util.copy(&quot;copy-link&quot;, &quot;复制成功&quot;)"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/social/8411ed322ced6.svg"></a></div><div class="qrcode" id="qrcode-wechat" style="visibility:hidden;height:0"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://hasaik.com/posts/4fc8b649.html"></div></div></section></div></article><div class="related-wrap" id="read-next"><section class="header cap theme"><span>接下来阅读</span></section><section class="body"><div class="post-title h2"><a href="/posts/faf888d5.html">Vue获取指定日期的那一周的开始、结束日期（从周日~周六）</a></div><div class="post-title fs14"><a href="/posts/34469844.html">上一篇：Vue 使用 XMLHttpRequest 导出 excel</a></div></section></div><div class="related-wrap" id="related-posts"><section class="header"><div class="title cap theme">您可能感兴趣的文章</div></section><section class="body"><div class="related-posts"><a class="item" href="/posts/34469844.html" title="Vue 使用 XMLHttpRequest 导出 excel"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg"></div><span class="title">Vue 使用 XMLHttpRequest 导出 excel</span><span class="excerpt">介绍 Vue 如何使用 XMLHttpRequest 导出 excel。</span></a><a class="item" href="/posts/69ab28bb.html" title="Element UI DatePicker 禁用当前日之前的时间"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg"></div><span class="title">Element UI DatePicker 禁用当前日之前的时间</span><span class="excerpt">这篇文章主要介绍了 vue element-ui el-date-picker 禁用当日之前时间,文中给大家提供了代码段和截图，非常不错，具有一定的参考借鉴价值，需要的朋友可以参考下。</span></a><a class="item" href="/posts/c9b4cff2.html" title="Vue 日期格式化"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg"></div><span class="title">Vue 日期格式化</span><span class="excerpt">介绍 Vue 中经常使用的日期格式化工具类。</span></a><a class="item" href="/posts/41567ba6.html" title="Vue 获取 url 上的参数"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg"></div><span class="title">Vue 获取 url 上的参数</span><span class="excerpt">经常我们在项目中需要获取 url 上参数进行使用，所以今天为大家奉上该函数 💜</span></a><a class="item" href="/posts/4394a738.html" title="Vue中Axios的封装与使用"><div class="img"><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="https://cdn.jsdelivr.net/gh/cdn-x/placeholder@1.0.1/cover/76b86c0226ffd.svg"></div><span class="title">Vue中Axios的封装与使用</span><span class="excerpt">axios 是一个基于 promise 的 http 库，可运行在浏览器端和 node.js 中。他有很多优秀的特性，例如统一进行拦截请求和响应、取消请求、转换 json 、客户端防御 XSRF 等。所以在日常开发中可以直接推荐我们使...</span></a></div></section></div><div class="related-wrap md" id="comments"><div class="cmt-title cap theme">快来参与讨论吧</div><div class="cmt-body valine"><div id="valine_container" class="valine_thread"><svg class="loading" style="vertical-align:middle;fill:currentColor;overflow:hidden" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2709"><path d="M832 512c0-176-144-320-320-320V128c211.2 0 384 172.8 384 384h-64zM192 512c0 176 144 320 320 320v64C300.8 896 128 723.2 128 512h64z" p-id="2710"/></svg></div></div></div><footer class="page-footer fs12"><hr><div><p>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p><p>本站由 <a href="https://hasaik.com/">@银河小徐</a> 创建，使用 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.0.0">Stellar</a> 作为主题。</p><p>本站由又拍云 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral">CDN</a> 分发，京 ICP 备 <a target="_blank" rel="external nofollow noopener noreferrer" href="https://beian.miit.gov.cn/">2020040230</a> 号。</p><div><span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>访客数：<span id="busuanzi_value_site_uv"></span> 人，总访问量：<span id="busuanzi_value_site_pv"></span> 次。</div></div></footer><script src="https://cdn.jsdelivr.net/gh/XuxuGood/simple-blog-cdn@main/js/time.js" async></script><script src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js" async></script><div class="float-panel mobile-only" style="display:none"><button type="button" class="sidebar-toggle mobile" onclick="sidebar.toggle()"><svg class="icon" viewbox="0 0 1228 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2849"><path d="M0 0m97.390199 0l973.901995 0q97.390199 0 97.390199 97.390199l0 0q0 97.390199-97.390199 97.3902l-973.901995 0q-97.390199 0-97.390199-97.3902l0 0q0-97.390199 97.390199-97.390199Z" p-id="2850"/><path d="M0 389.560798m97.390199 0l973.901995 0q97.390199 0 97.390199 97.390199l0 0q0 97.390199-97.390199 97.3902l-973.901995 0q-97.390199 0-97.390199-97.3902l0 0q0-97.390199 97.390199-97.390199Z" p-id="2851"/><path d="M0 779.121596m97.390199 0l973.901995 0q97.390199 0 97.390199 97.390199l0 0q0 97.390199-97.390199 97.390199l-973.901995 0q-97.390199 0-97.390199-97.390199l0 0q0-97.390199 97.390199-97.390199Z" p-id="2852"/></svg></button></div></div></div><div class="scripts"><script type="text/javascript">stellar = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    loadCSS: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    // 从 butterfly 和 volantis 获得灵感
+    loadScript: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script')
+      script.src = src
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    // https://github.com/jerryc127/hexo-theme-butterfly
+    jQuery: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        stellar.loadScript(stellar.plugins.jQuery).then(fn)
+      } else {
+        fn()
+      }
+    }
+  };
+  stellar.github = 'https://github.com/xaoxuu/hexo-theme-stellar/tree/1.0.0';
+  stellar.config = {
+    date_suffix: {
+      just: '刚刚',
+      min: '分钟前',
+      hour: '小时前',
+      day: '天前',
+      month: '个月前',
+    },
+  };
+
+  // required plugins (only load if needs)
+  stellar.plugins = {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js',
+    sitesjs: '/js/plugins/sites.js',
+    friendsjs: '/js/plugins/friends.js',
+  };
+
+  // optional plugins
+  if ('true' == 'true') {
+    stellar.plugins.lazyload = Object.assign({"enable":true,"js":"https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.1/dist/lazyload.min.js","transition":"blur"});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.swiper = Object.assign({"enable":true,"css":"https://unpkg.com/swiper/swiper-bundle.min.css","js":"https://unpkg.com/swiper/swiper-bundle.min.js"});
+  }
+  if ('' == 'true') {
+    stellar.plugins.scrollreveal = Object.assign({"enable":null,"js":"https://cdn.jsdelivr.net/npm/scrollreveal@4.0.9/dist/scrollreveal.min.js","distance":"8px","duration":500,"interval":100,"scale":1});
+  }
+  if ('true' == 'true') {
+    stellar.plugins.preload = Object.assign({"enable":true,"service":"flying_pages","instant_page":"https://cdn.jsdelivr.net/gh/volantis-x/cdn-volantis@4.1.2/js/instant_page.js","flying_pages":"https://cdn.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"});
+  }</script><script src="/js/main.js" async></script><script>function getEmojiMaps() {
+    function emoji(path, idx, ext) {
+      return path + "/" + path + "-" + idx + "." + ext;
+    }
+
+    var emojiMaps = {};
+    for (var i = 1; i <= 2; i++) {
+      emojiMaps['fun-' + i] = emoji('fun', i, 'gif');
+    }
+    for (var i = 1; i <= 54; i++) {
+      emojiMaps['tieba-' + i] = emoji('tieba', i, 'png');
+    }
+    for (var i = 1; i <= 101; i++) {
+      emojiMaps['qq-' + i] = emoji('qq', i, 'gif');
+    }
+    for (var i = 1; i <= 116; i++) {
+      emojiMaps['aru-' + i] = emoji('aru', i, 'gif');
+    }
+    for (var i = 1; i <= 125; i++) {
+      emojiMaps['twemoji-' + i] = emoji('twemoji', i, 'png');
+    }
+    for (var i = 1; i <= 4; i++) {
+      emojiMaps['weibo-' + i] = emoji('weibo', i, 'png');
+    }
+    return emojiMaps;
+  }
+  function load_comment(){
+    if(!document.getElementById("valine_container"))return;
+    stellar.loadScript('https://cdn.jsdelivr.net/gh/XuxuGood/simple-blog-cdn@main/js/Valine.min.js', {defer:true}).then(function () {
+      const el = document.getElementById("valine_container");
+      var path = el.getAttribute('comment_id');
+      const placeholder = "温馨提示: 遵纪守法, 友善评论!\n粘贴图片到此处可以自动上传，填写邮箱可以收到邮件回复哦(●&#39;◡&#39;●)";
+      if (!path) {
+        path = decodeURI(window.location.pathname);
+      }
+      var valine = new Valine();
+      valine.init(Object.assign({"js":"https://cdn.jsdelivr.net/gh/XuxuGood/simple-blog-cdn@main/js/Valine.min.js","appId":"gYcUzERw1BSKyARbzWH2OQzu-gzGzoHsz","appKey":"7xvFncnnyG2QI60iDY3E4PuO","placeholder":"温馨提示: 遵纪守法, 友善评论!\\n粘贴图片到此处可以自动上传，填写邮箱可以收到邮件回复哦(●'◡'●)","meta":["nick","mail","link"],"requiredFields":["nick","mail"],"enableQQ":true,"recordIP":false,"avatar":"robohash","pageSize":10,"lang":"zh-cn","highlight":true,"mathJax":false,"tagMeta":["博主","小伙伴","访客"],"metaPlaceholder":{"nick":"昵称/QQ号(必填)","mail":"邮箱（必填，完全保密）","link":"网址(https://)"},"master":["6a565e6c47127afdd40d5d46089db2c5"],"friends":["d32d39c8e126512382ee4b831a8f8002","d06adebbcbaa24413cc1b53dc8576ed0","ab2579686cf0e99e1ba40a932e0400f5","e846889207767f93e049a14a29a12d55","3f96b7b64421af2309f48ce09f483e00","36937ffd56ac7ac077c3e2dceae74dc5","00fdb1c48ae14c86afce12a8f9fc3d77","fde3448b9705037f2021664c8b8e6cb1","dd04aab66ee54f77e80e8a7781a3e8e2","35d7010131d4f17efe9842174c3c1c2c","ee307e1162191d9120f967483af6d490","15f39db75e8624d52353ae6943eb66ca","187c2861161c500c97a69290c89b5526","876272e6ce1dd1059dabdc871f59d251","9be62391e297826516364374435f758c","e086f9ab51f37cb606fc6378c36cd9aa","e8b473e9af0f2718265c88b809a0a7b2","3ce1e6c77b4910f1871106cb30dc62b0","28b57baa4e8f13fe4292ccb2de267e30","3c915d7f53fe9ae72235eb188968ad86","3e440f8724c5acd24d0a4fab6eb6a6d1","c531da832f0416df03fc57754b39fefd","adb7d1cd192658a55c0ad22a3309cecf","8f9395b39f5a1e06301e25337c5b81c0","fc2c9b067f65c9e2d7057ba797f7cfca","0ba7b878d4a392fb04f8f4090fcc2248","9f38a40d977e6e8a6a555fef3849f23a","95dbe659464f10506676f48b11962ef7"]}, {
+        el: '#valine_container',
+        path: path,
+        placeholder: placeholder,
+        emojiCDN: 'https://cdn.jsdelivr.net/gh/XuxuGood/simple-blog-cdn@main/images/emoji/valine/',
+        emojiMaps: getEmojiMaps(),
+      }));
+    });
+  }
+  window.addEventListener('DOMContentLoaded', (event) => {
+    console.log('DOM fully loaded and parsed');
+    load_comment();
+  });</script></div><script data-pjax>var parent,child;document.getElementById("recent-categories")&&"/comments/"==location.pathname&&(parent=document.getElementById("recent-categories"),child='<div class="recent-post-item" style="width:100%;height: auto"><div id="catalog_magnet"><div class="magnet_item"><a class="magnet_link" href="categories/Gitlab/"><div class="magnet_link_context" style=""><span style="font-weight:500;flex:1">📚 小冰の魔改教程 (1)</span><span style="padding:0px 4px;border-radius: 8px;"><i class="fas fa-arrow-circle-right"></i></span></div></a></div><div class="magnet_item"><a class="magnet_link" href="categories/Java/"><div class="magnet_link_context" style=""><span style="font-weight:500;flex:1">🎮 小冰の游戏评测 (13)</span><span style="padding:0px 4px;border-radius: 8px;"><i class="fas fa-arrow-circle-right"></i></span></div></a></div><a class="magnet_link_more"  href="/categories" style="flex:1;text-align: center;margin-bottom: 10px;">查看更多...</a></div></div>',console.log("已挂载magnet"),parent.insertAdjacentHTML("afterbegin",child))</script><style>#catalog_magnet{flex-wrap:wrap;display:flex;width:100%;justify-content:space-between;padding:10px 10px 0 10px;align-content:flex-start}.magnet_item{flex-basis:calc(50% - 5px);background:#f2f2f2;margin-bottom:10px;border-radius:8px;transition:all .2s ease-in-out}.magnet_item:hover{background:#b30070}.magnet_link_more{color:#555}.magnet_link{color:#000}.magnet_link:hover{color:#fff}@media screen and (max-width:600px){.magnet_item{flex-basis:100%}}.magnet_link_context{display:flex;padding:10px;font-size:16px;transition:all .2s ease-in-out}.magnet_link_context:hover{padding:10px 20px}</style><style></style></body></html>
